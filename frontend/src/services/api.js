@@ -8,7 +8,7 @@ const BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const client = axios.create({
   baseURL: BASE,
-  timeout: 300_000,  // 5 min — VQE can be slow on cloud-qpu
+  timeout: 600_000,  // 10 min — sweep can be slow with noisy+mitigated
 })
 
 client.interceptors.response.use(
@@ -26,13 +26,24 @@ export const fetchMolecules = () => client.get('/quantum/molecules')
 export const fetchHamiltonian = (molecule, bondLength) =>
   client.get('/quantum/hamiltonian', { params: { molecule, bond_length: bondLength } })
 
-// -------- circuit info
+// -------- circuit info (ansatz metadata)
 export const fetchCircuit = (molecule) =>
   client.get('/quantum/circuit', { params: { molecule } })
 
-// -------- run VQE
+// -------- transpiled ISA circuit stats for a fake backend
+export const fetchCircuitISA = (molecule, fakeBackend) =>
+  client.get('/quantum/circuit-isa', { params: { molecule, fake_backend: fakeBackend } })
+
+// -------- list available fake backends
+export const fetchFakeBackends = () => client.get('/quantum/fake-backends')
+
+// -------- run single-point VQE
 export const runVQE = (payload) =>
   client.post('/quantum/run', payload)
+
+// -------- run bond-dissociation sweep
+export const runSweep = (payload) =>
+  client.post('/quantum/sweep', payload)
 
 // -------- health
 export const fetchHealth = () => client.get('/health')
