@@ -1,12 +1,13 @@
-"""FastAPI routers for quantum endpoints."""
+"""FastAPI routers for quantum endpoints — extended with sweep and ISA stats."""
 from __future__ import annotations
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel, Field
 
 from config import settings
 from services.quantum_service import run_vqe, get_circuit_info
 from services.molecular_hamiltonians import MOLECULES, exact_ground_state_energy, build_hamiltonian
+from services.sweep_service import run_sweep, get_isa_circuit_stats, FAKE_BACKENDS
 
 router = APIRouter(prefix="/api/quantum", tags=["quantum"])
 logger = logging.getLogger("quantum_router")
@@ -31,6 +32,18 @@ class HamiltonianResponse(BaseModel):
     pauli_terms: list[dict]
     exact_energy: float
     n_qubits: int
+
+
+class SweepRequest(BaseModel):
+    molecule: str = Field(default="H2", description="H2, LiH, or H2O")
+    r_min: float = Field(default=0.3, gt=0.0, le=6.0)
+    r_max: float = Field(default=2.5, gt=0.0, le=6.0)
+    r_step: float = Field(default=0.1, ge=0.05, le=0.5)
+    max_iter: int = Field(default=80, ge=10, le=400)
+    seed: int = Field(default=42, ge=0)
+    fake_backend: str = Field(default="FakeNairobi")
+    include_noisy: bool = Field(default=True)
+    include_mitigated: bool = Field(default=True)
 
 
 # ----------------------------------------------------------------- endpoints
@@ -88,6 +101,88 @@ def get_circuit(molecule: str):
     except Exception as exc:
         logger.exception("circuit error")
         raise HTTPException(500, str(exc)) from exc
+
+
+@router.get("/fake-backends")
+def list_fake_backends():
+    """Return the list of available local fake backends (no account needed)."""
+    return {"fake_backends": list(FAKE_BACKENDS.keys())}
+
+
+@router.get("/circuit-isa")
+def get_circuit_isa(molecule: str, fake_backend: str = "FakeNairobi"):
+    """
+    Transpile the ansatz to the ISA gate set of the given fake backend and return:
+      - original ansatz depth vs transpiled ISA depth
+      - gate counts per operation type
+      - CX/CNOT count specifically
+      - SparsePauliOp Hamiltonian string
+      - text diagrams of ansatz and ISA circuit
+    Does NOT run any simulation.
+    """
+    if molecule not in MOLECULES:
+        raise HTTPException(400, f"Unknown molecule '{molecule}'.")
+    if fake_backend not in FAKE_BACKENDS:
+        raise HTTPException(400, f"Unknown fake backend '{fake_backend}'. Choose from: {list(FAKE_BACKENDS.keys())}")
+    try:
+        return get_isa_circuit_stats(molecule, fake_backend)
+    except Exception as exc:
+        logger.exception("circuit-isa error")
+        raise HTTPException(500, str(exc)) from exc
+
+
+@router.post("/sweep")
+def sweep_bond_lengths(req: SweepRequest):
+    """
+    Run a VQE bond-dissociation curve sweep.
+
+    Sweeps bond lengths from r_min to r_max in r_step increments and returns
+    energy values for the requested series (ideal, exact, noisy, mitigated).
+    All runs are fully local — no IBM Quantum account required.
+
+    The noisy and mitigated series use AerSimulator.from_backend() with a
+    real-device noise model from the selected fake backend.
+    Mitigation uses qiskit_ibm_runtime EstimatorV2 resilience_level=1 (T-REx).
+    """
+    if req.molecule not in MOLECULES:
+        raise HTTPException(400, f"Unknown molecule '{req.molecule}'.")
+    if req.r_min >= req.r_max:
+        raise HTTPException(400, "r_min must be less than r_max.")
+    if req.fake_backend not in FAKE_BACKENDS:
+        raise HTTPException(
+            400,
+            f"Unknown fake backend '{req.fake_backend}'. Choose from: {list(FAKE_BACKENDS.keys())}"
+        )
+    n_points = int((req.r_max - req.r_min) / req.r_step) + 1
+    if n_points > 60:
+        raise HTTPException(
+            400,
+            f"Too many sweep points ({n_points}). Reduce range or increase step size (max 60 points)."
+        )
+
+    logger.info(
+        "Bond sweep: molecule=%s r=[%.2f, %.2f] step=%.2f noisy=%s mitigated=%s backend=%s",
+        req.molecule, req.r_min, req.r_max, req.r_step,
+        req.include_noisy, req.include_mitigated, req.fake_backend,
+    )
+
+    try:
+        return run_sweep(
+            molecule=req.molecule,
+            r_min=req.r_min,
+            r_max=req.r_max,
+            r_step=req.r_step,
+            max_iter=req.max_iter,
+            seed=req.seed,
+            fake_backend_name=req.fake_backend,
+            include_noisy=req.include_noisy,
+            include_mitigated=req.include_mitigated,
+        )
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except Exception as exc:
+        logger.exception("sweep error")
+        raise HTTPException(500, f"Sweep failed: {exc}") from exc
 
 
 @router.post("/run")
