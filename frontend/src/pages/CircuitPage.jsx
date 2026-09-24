@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Tile, Dropdown, Tag, Loading, InlineNotification, Slider } from '@carbon/react'
+import { Tile, Dropdown, Tag, Loading, InlineNotification } from '@carbon/react'
 import { fetchCircuit, fetchHamiltonian } from '../services/api'
 import { useDemoContext } from '../context/DemoContext'
+import QuantumMappingPanel from '../components/QuantumMappingPanel'
 
 const MOLECULES = [
   { id: 'H2',  text: 'H₂ — Hydrogen' },
@@ -148,6 +149,9 @@ export default function CircuitPage() {
           </div>
         )
       }
+
+      {/* ── Feature 3: "How this maps to quantum" collapsible panel ── */}
+      <QuantumMappingPanel molecule={mol} bondLength={r} />
     </div>
   )
 }
