@@ -25,6 +25,7 @@ import {
   Analytics,
   NetworkEnterprise,
   Information,
+  ChartLine,
 } from '@carbon/icons-react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import DemoBanner from './components/DemoBanner'
@@ -35,14 +36,16 @@ const CircuitPage     = lazy(() => import('./pages/CircuitPage'))
 const RunPage         = lazy(() => import('./pages/RunPage'))
 const ResultsPage     = lazy(() => import('./pages/ResultsPage'))
 const ArchitecturePage = lazy(() => import('./pages/ArchitecturePage'))
+const BondCurvePage   = lazy(() => import('./pages/BondCurvePage'))
 
 const NAV_ITEMS = [
-  { to: '/',             label: 'Dashboard',     Icon: Dashboard },
-  { to: '/problem',      label: 'Problem',        Icon: Chemistry },
-  { to: '/circuit',      label: 'Circuit',        Icon: QCircuitComposer },
-  { to: '/run',          label: 'Run VQE',        Icon: PlayFilledAlt },
-  { to: '/results',      label: 'Results',        Icon: Analytics },
-  { to: '/architecture', label: 'Architecture',   Icon: NetworkEnterprise },
+  { to: '/',             label: 'Dashboard',         Icon: Dashboard },
+  { to: '/problem',      label: 'Problem',            Icon: Chemistry },
+  { to: '/circuit',      label: 'Circuit',            Icon: QCircuitComposer },
+  { to: '/run',          label: 'Run VQE',            Icon: PlayFilledAlt },
+  { to: '/bond-curve',   label: 'Bond Curve',         Icon: ChartLine },
+  { to: '/results',      label: 'Results',            Icon: Analytics },
+  { to: '/architecture', label: 'Architecture',       Icon: NetworkEnterprise },
 ]
 
 export default function App() {
@@ -105,6 +108,7 @@ export default function App() {
                 <Route path="/problem"      element={<ProblemPage />} />
                 <Route path="/circuit"      element={<CircuitPage />} />
                 <Route path="/run"          element={<RunPage />} />
+                <Route path="/bond-curve"   element={<BondCurvePage />} />
                 <Route path="/results"      element={<ResultsPage />} />
                 <Route path="/architecture" element={<ArchitecturePage />} />
               </Routes>
