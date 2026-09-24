@@ -1,0 +1,7 @@
+// Carbon g100 theme — must be the first import
+@use '@carbon/react/scss/themes' as themes;
+@use '@carbon/react/scss/theme' with (
+  $theme: themes.$g100
+);
+@use '@carbon/react';
+@use '@carbon/react/scss/reset';

@@ -1,0 +1,279 @@
+/* Global application styles — layered over g100 */
+:root {
+  --quantum-blue: #4589ff;
+  --quantum-teal: #08bdba;
+  --quantum-purple: #be95ff;
+  --quantum-gold: #f1c21b;
+  --quantum-green: #42be65;
+  --quantum-red: #fa4d56;
+  --surface-overlay: rgba(22, 22, 22, 0.85);
+}
+
+body {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  background-color: #161616;
+  color: #f4f4f4;
+  margin: 0;
+}
+
+code, pre, .mono {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+/* Sticky demo banner */
+.demo-banner-sticky {
+  position: sticky;
+  top: 3rem;
+  z-index: 7999;
+}
+
+/* Page content area below the 48px header */
+.page-content {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* KPI tiles */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-tile {
+  background: #262626;
+  border-left: 4px solid var(--quantum-blue);
+  padding: 1.25rem;
+  position: relative;
+}
+
+.kpi-tile.success { border-left-color: var(--quantum-green); }
+.kpi-tile.warning { border-left-color: var(--quantum-gold); }
+.kpi-tile.danger  { border-left-color: var(--quantum-red); }
+.kpi-tile.teal    { border-left-color: var(--quantum-teal); }
+.kpi-tile.purple  { border-left-color: var(--quantum-purple); }
+
+.kpi-tile__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a8a8a8;
+  margin-bottom: 0.5rem;
+}
+
+.kpi-tile__value {
+  font-size: 2rem;
+  font-weight: 300;
+  font-family: 'IBM Plex Mono', monospace;
+  color: #f4f4f4;
+}
+
+.kpi-tile__unit {
+  font-size: 0.875rem;
+  color: #a8a8a8;
+  margin-left: 0.25rem;
+}
+
+.kpi-tile__sublabel {
+  font-size: 0.75rem;
+  color: #6f6f6f;
+  margin-top: 0.25rem;
+}
+
+/* Energy display — monospace, scientific */
+.energy-display {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.5rem;
+  color: var(--quantum-teal);
+  background: #1c1c1c;
+  border: 1px solid #393939;
+  padding: 0.75rem 1rem;
+  border-radius: 2px;
+}
+
+.energy-display.exact {
+  color: var(--quantum-gold);
+}
+
+/* Circuit diagram */
+.circuit-diagram {
+  background: #0a0a0a;
+  border: 1px solid #393939;
+  padding: 1.5rem;
+  overflow-x: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #c6c6c6;
+  white-space: pre;
+}
+
+/* Run controls */
+.run-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .run-controls { grid-template-columns: 1fr; }
+}
+
+/* Progress / status pills */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-pill.running  { background: rgba(69,137,255,0.15); color: var(--quantum-blue); border: 1px solid rgba(69,137,255,0.4); }
+.status-pill.done     { background: rgba(66,190,101,0.15); color: var(--quantum-green); border: 1px solid rgba(66,190,101,0.4); }
+.status-pill.error    { background: rgba(250,77,86,0.15);  color: var(--quantum-red);  border: 1px solid rgba(250,77,86,0.4); }
+.status-pill.idle     { background: rgba(111,111,111,0.15); color: #a8a8a8; border: 1px solid #393939; }
+
+/* Section headings */
+.section-heading {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8d8d8d;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #393939;
+  padding-bottom: 0.5rem;
+}
+
+/* Results comparison */
+.results-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 900px) {
+  .results-compare { grid-template-columns: 1fr; }
+}
+
+/* Honesty banner */
+.honesty-banner {
+  background: rgba(161,0,0,0.1);
+  border: 1px solid rgba(250,77,86,0.3);
+  border-left: 4px solid var(--quantum-red);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: #ffd7d9;
+  line-height: 1.6;
+}
+
+.honesty-banner strong {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--quantum-red);
+  margin-bottom: 0.375rem;
+}
+
+/* Chart container */
+.chart-tile {
+  background: #262626;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Architecture page */
+.arch-component-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.arch-component-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  background: #1c1c1c;
+  color: #8d8d8d;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid #393939;
+}
+
+.arch-component-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #262626;
+  vertical-align: top;
+}
+
+.arch-component-table tr:hover td {
+  background: #1c1c1c;
+}
+
+/* Molecule selector cards */
+.molecule-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.molecule-card {
+  background: #262626;
+  border: 2px solid #393939;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.molecule-card:hover, .molecule-card.selected {
+  border-color: var(--quantum-blue);
+}
+
+.molecule-card.selected {
+  background: rgba(69,137,255,0.08);
+}
+
+.molecule-card__formula {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.75rem;
+  font-weight: 300;
+  color: var(--quantum-teal);
+  margin-bottom: 0.25rem;
+}
+
+.molecule-card__name {
+  font-size: 0.8125rem;
+  color: #a8a8a8;
+}
+
+/* Scrollable log panel */
+.log-panel {
+  background: #0a0a0a;
+  border: 1px solid #393939;
+  padding: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  height: 200px;
+  overflow-y: auto;
+  color: #6f6f6f;
+}
+
+.log-panel .log-line {
+  margin-bottom: 0.125rem;
+}
+
+.log-panel .log-line.info    { color: var(--quantum-blue); }
+.log-panel .log-line.success { color: var(--quantum-green); }
+.log-panel .log-line.warn    { color: var(--quantum-gold); }
+.log-panel .log-line.error   { color: var(--quantum-red); }

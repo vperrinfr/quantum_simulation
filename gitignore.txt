@@ -1,0 +1,9 @@
+# rename to .gitignore
+.env
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+.DS_Store
+*.egg-info/
